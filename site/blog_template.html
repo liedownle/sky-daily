@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{TITLE}}</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", "Noto Serif SC", serif;
+    min-height: 100vh;
+    background: linear-gradient(160deg, #0b1526 0%, #12233d 45%, #1e3350 100%);
+    background-attachment: fixed;
+    color: #e4eaf3;
+    line-height: 1.8;
+  }
+  .stars {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,.7), transparent),
+      radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,.6), transparent),
+      radial-gradient(1px 1px at 85% 20%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 55% 10%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 10% 65%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 30% 50%, rgba(255,255,255,.3), transparent);
+  }
+
+  /* ---------- 密码门 ---------- */
+  #gate {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(ellipse at 50% 35%, #142a44 0%, #0b1526 75%);
+  }
+  .gate-card {
+    width: min(92vw, 380px);
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 18px;
+    padding: 42px 34px 36px;
+    text-align: center;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  }
+  .gate-icon { font-size: 34px; color: #f2c879; margin-bottom: 12px; text-shadow: 0 0 22px rgba(242,200,121,.55); }
+  .gate-card h1 { font-size: 22px; font-weight: 600; letter-spacing: 2px; color: #f4e9d2; margin-bottom: 6px; }
+  .gate-sub { font-size: 13px; color: #8fa3bd; margin-bottom: 26px; }
+  #pw {
+    width: 100%; padding: 12px 16px; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.18); background: rgba(0,0,0,.3);
+    color: #f4e9d2; font-size: 15px; outline: none; text-align: center; letter-spacing: 1px;
+    transition: border-color .2s;
+  }
+  #pw:focus { border-color: #f2c879; }
+  #unlock {
+    width: 100%; margin-top: 14px; padding: 12px; border: none; border-radius: 10px;
+    background: linear-gradient(135deg, #f2c879, #d9974a); color: #221a0e;
+    font-size: 16px; font-weight: 600; cursor: pointer; letter-spacing: 6px;
+    transition: filter .2s, transform .1s;
+  }
+  #unlock:hover { filter: brightness(1.08); }
+  #unlock:active { transform: scale(.98); }
+  .gate-error { margin-top: 14px; font-size: 13px; color: #ff9d9d; }
+
+  /* ---------- 文章 ---------- */
+  #content { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 56px 20px 64px; }
+  .article {
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px;
+    padding: 46px 52px 40px;
+    box-shadow: 0 14px 40px rgba(0,0,0,.35);
+  }
+  .article h1 { font-size: 26px; color: #f4e9d2; line-height: 1.4; letter-spacing: 1px; }
+  .meta { margin: 14px 0 28px; font-size: 13px; color: #8fa3bd; display: flex; gap: 18px; flex-wrap: wrap; }
+  .meta span { display: inline-flex; align-items: center; }
+  .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(242,200,121,.5), transparent); margin: 26px 0 30px; }
+  .article h2 {
+    font-size: 19px; color: #f2c879; margin: 34px 0 14px;
+    padding-left: 12px; border-left: 3px solid #f2c879; letter-spacing: 1px;
+  }
+  .article h3 { font-size: 16px; color: #f4e9d2; margin: 24px 0 10px; }
+  .article p { font-size: 15px; margin: 10px 0; color: #e4eaf3; }
+  .article strong { color: #f2c879; }
+  .article a { color: #f2c879; text-decoration: none; border-bottom: 1px dashed rgba(242,200,121,.5); }
+  .article ul, .article ol { margin: 10px 0 10px 22px; font-size: 15px; }
+  .article li { margin: 6px 0; }
+  .article li::marker { color: #f2c879; }
+  .article code {
+    background: rgba(0,0,0,.35); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 5px; padding: 2px 7px; font-size: 13.5px;
+    font-family: "SF Mono", Consolas, "Courier New", monospace; color: #ffd9a0;
+  }
+  .article pre {
+    background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    overflow-x: auto; font-size: 13px; line-height: 1.6;
+  }
+  .article pre code { background: none; border: none; padding: 0; color: #cfe3ff; }
+  .article blockquote {
+    margin: 16px 0; padding: 12px 18px;
+    border-left: 3px solid #f2c879; border-radius: 0 8px 8px 0;
+    background: rgba(242,200,121,.07); color: #cdd6e2; font-size: 14.5px;
+  }
+  .article blockquote p { margin: 4px 0; color: #cdd6e2; }
+  .article table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+  .article th, .article td { border: 1px solid rgba(255,255,255,.14); padding: 8px 12px; text-align: left; }
+  .article th { background: rgba(242,200,121,.12); color: #f2c879; font-weight: 600; }
+  .article hr { border: none; height: 1px; background: rgba(255,255,255,.12); margin: 28px 0; }
+  .article img { max-width: 100%; border-radius: 10px; margin: 12px 0; border: 1px solid rgba(255,255,255,.12); }
+  .table-wrap { overflow-x: auto; }
+  footer { position: relative; z-index: 1; text-align: center; font-size: 12px; color: #6d8199; padding: 0 20px 40px; }
+  @media (max-width: 560px) {
+    #content { padding-top: 28px; }
+    .article { padding: 28px 20px; }
+    .article h1 { font-size: 21px; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<!-- 密码门 -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-icon">&#10022;</div>
+    <h1>私人笔记</h1>
+    <p class="gate-sub">输入访问密码解锁文章</p>
+    <input type="password" id="pw" placeholder="请输入密码" autocomplete="off" enterkeyhint="go">
+    <button id="unlock">进入</button>
+    <p class="gate-error" id="err" hidden>密码不对，再试试</p>
+  </div>
+</div>
+
+<!-- 文章 -->
+<main id="content" hidden>
+  <article class="article">
+    <h1>{{TITLE}}</h1>
+    <div class="meta">{{META}}</div>
+    <div class="divider"></div>
+    {{CONTENT}}
+  </article>
+</main>
+<footer>仅限传阅 · 请勿外传</footer>
+
+<script>
+// 纯 JS SHA-256（不依赖 crypto.subtle，file:// 与 https 均可运行）
+function sha256(ascii) {
+  function rightRotate(v, a) { return (v >>> a) | (v << (32 - a)); }
+  var mathPow = Math.pow, maxWord = mathPow(2, 32), lenProp = 'length';
+  var i, j, result = '', words = [];
+  var asciiBitLength = ascii[lenProp] * 8;
+  var hash = sha256.h = sha256.h || [];
+  var k = sha256.k = sha256.k || [];
+  var primeCounter = k[lenProp], isComposite = {};
+  for (var candidate = 2; primeCounter < 64; candidate++) {
+    if (!isComposite[candidate]) {
+      for (i = 0; i < 313; i += candidate) isComposite[i] = candidate;
+      hash[primeCounter] = (mathPow(candidate, .5) * maxWord) | 0;
+      k[primeCounter++] = (mathPow(candidate, 1 / 3) * maxWord) | 0;
+    }
+  }
+  ascii += '\x80';
+  while (ascii[lenProp] % 64 - 56) ascii += '\x00';
+  for (i = 0; i < ascii[lenProp]; i++) {
+    j = ascii.charCodeAt(i);
+    if (j >> 8) return '';
+    words[i >> 2] |= j << ((3 - i) % 4) * 8;
+  }
+  words[words[lenProp]] = ((asciiBitLength / maxWord) | 0);
+  words[words[lenProp]] = asciiBitLength;
+  for (j = 0; j < words[lenProp];) {
+    var w = words.slice(j, j += 16);
+    var oldHash = hash;
+    hash = hash.slice(0, 8);
+    for (i = 0; i < 64; i++) {
+      var w15 = w[i - 15], w2 = w[i - 2];
+      var a = hash[0], e = hash[4];
+      var temp1 = hash[7]
+        + (rightRotate(e, 6) ^ rightRotate(e, 11) ^ rightRotate(e, 25))
+        + ((e & hash[5]) ^ ((~e) & hash[6]))
+        + k[i]
+        + (w[i] = (i < 16) ? w[i] : (w[i - 16]
+            + (rightRotate(w15, 7) ^ rightRotate(w15, 18) ^ (w15 >>> 3))
+            + w[i - 7]
+            + (rightRotate(w2, 17) ^ rightRotate(w2, 19) ^ (w2 >>> 10))) | 0);
+      var temp2 = (rightRotate(a, 2) ^ rightRotate(a, 13) ^ rightRotate(a, 22))
+        + ((a & hash[1]) ^ (a & hash[2]) ^ (hash[1] & hash[2]));
+      hash = [(temp1 + temp2) | 0].concat(hash);
+      hash[4] = (hash[4] + temp1) | 0;
+    }
+    for (i = 0; i < 8; i++) hash[i] = (hash[i] + oldHash[i]) | 0;
+  }
+  for (i = 0; i < 8; i++) {
+    for (j = 3; j + 1; j--) {
+      var b = (hash[i] >> (j * 8)) & 255;
+      result += ((b < 16) ? 0 : '') + b.toString(16);
+    }
+  }
+  return result;
+}
+
+var PASSWORD_HASH = "{{PASSWORD_HASH}}";
+
+function unlock() {
+  var input = document.getElementById('pw');
+  var err = document.getElementById('err');
+  var pw = input.value;
+  var h = sha256(pw);
+  if (!h) { err.textContent = '密码仅支持英文和数字'; err.hidden = false; return; }
+  if (h === PASSWORD_HASH) {
+    sessionStorage.setItem('blog_unlocked', '1');
+    showContent();
+  } else {
+    err.hidden = false;
+    input.value = '';
+    input.focus();
+  }
+}
+
+function showContent() {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('content').hidden = false;
+}
+
+document.getElementById('unlock').addEventListener('click', unlock);
+document.getElementById('pw').addEventListener('keydown', function (e) {
+  if (e.key === 'Enter') unlock();
+});
+
+if (sessionStorage.getItem('blog_unlocked') === '1') showContent();
+</script>
+</body>
+</html>

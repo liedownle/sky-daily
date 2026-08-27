@@ -1,0 +1,17 @@
+# 本地敏感配置（含真实账号 uid / game_uid / 设备 udid / 密码，勿上传）
+config.json
+
+# 抓包原始响应快照
+out/
+
+# 构建产物（含密码哈希，本地运行脚本即可重新生成）
+site/index.html
+site/tasks.html
+public/
+
+# Python 缓存
+__pycache__/
+
+# 每日任务相关（仅本地使用，不上传 GitHub）
+sky_fetch.py
+site/template.html

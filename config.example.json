@@ -1,0 +1,28 @@
+{
+  "api_url": "https://<小精灵问答接口地址，本地抓包获取，勿公开>",
+  "token": "",
+  "account": {
+    "uid": "你的网易账号 uid（kefu_get_token 请求里的 uid 字段）",
+    "game_uid": "你的游戏角色 uid（kefu_get_token 请求里的 game_uid 字段）",
+    "game_server": 8000,
+    "os": "android",
+    "login_from": 0,
+    "map": "CandleSpace",
+    "gm_api": "http://<token 签发接口地址，本地抓包获取，勿公开>",
+    "gm_user_agent": "Dalvik/2.1.0 (Linux; U; Android 12; MuMu Build/V417IR)"
+  },
+  "site": {
+    "password": "改成你自己的密码（仅支持英文和数字，生成网页时只写入哈希）",
+    "title": "光遇每日任务",
+    "output": "site/index.html"
+  },
+  "user_agent": "Mozilla/5.0 (Linux; Android 12; MuMu Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/110.0.5481.154 Safari/537.36 os/android32 gmbridge/6.0.0 package_name/com.netease.sky udid/改成你自己的设备id getUserTicket/1 Unisdk/2.1 unisdkloginchannel/netease webview_orbit/1.5",
+  "origin": "https://sprite.16163.com",
+  "referer": "https://sprite.16163.com/",
+  "request_body": {
+    "ismanual": 0,
+    "loginFrom": "sprite",
+    "method": "link",
+    "question": "今日任务指南"
+  }
+}
